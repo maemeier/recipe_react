@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import Form from "./components/form";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import "./App.css";
+
+const API_KEY = "f8712a0f1493c8ff00a343401695a06f";
+
+class App extends Component {
+  state = {
+    recipes: []
+  };
+  getRecipe = async e => {
+    // target the element from recipeName and acess the value from the form
+    const recipeName = e.target.elements.recipeName.value;
+    e.preventDefault();
+    const api_call = await fetch(
+      `https://cors-anywhere.herokuapp.com/https://www.food2fork.com/api/search?key=${API_KEY}&q=shredded%20chicken&count=5`
+    );
+    const data = await api_call.json();
+    this.setState({ recipes: data.recipes });
+    console.log(this.state.recipes);
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <h1 className="App-title"> Recipe Search</h1>
+        </header>
+        <Form getRecipe={this.getRecipe} />
+        {this.state.recipes.map(recipe => {
+          return <p key={recipe.recipe_id}>{recipe.title}</p>;
+        })}
+      </div>
+    );
+  }
 }
 
 export default App;
